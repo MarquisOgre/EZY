@@ -16,7 +16,7 @@ Visit our ANN thread at [BitcoinTalk](http://www.bitcointalk.org/index.php?topic
 <tr><td>Algo</td><td>Quark</td></tr>
 <tr><td>Block Time</td><td>60 Seconds</td></tr>
 <tr><td>Difficulty Retargeting</td><td>Every Block</td></tr>
-<tr><td>Max Coin Supply</td><td>33,528,000 PIV</td></tr>
+<tr><td>Max Coin Supply</td><td>33,528,000 EZY</td></tr>
 <tr><td>Premine</td><td>1,000,000 EZY</td></tr>
 </table>
 
