@@ -120,6 +120,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
     else
         pblock->nVersion = 3;
 
+    //LogPrintf("CreateNewBlock Create coinbase tx \n"); 
     // Create coinbase tx
     CMutableTransaction txNew;
     txNew.vin.resize(1);
@@ -134,6 +135,8 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
     static int64_t nLastCoinStakeSearchTime = GetAdjustedTime(); // only initialized at startup
 
     if (fProofOfStake) {
+        //LogPrintf("CreateNewBlock fProofOfStake \n"); 
+      
         boost::this_thread::interruption_point();
         pblock->nTime = GetAdjustedTime();
         CBlockIndex* pindexPrev = chainActive.Tip();
@@ -157,10 +160,12 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
             return NULL;
     }
 
+
     // Largest block you're willing to create:
     unsigned int nBlockMaxSize = GetArg("-blockmaxsize", DEFAULT_BLOCK_MAX_SIZE);
     // Limit to betweeen 1K and MAX_BLOCK_SIZE-1K for sanity:
     unsigned int nBlockMaxSizeNetwork = MAX_BLOCK_SIZE_CURRENT;
+
     nBlockMaxSize = std::max((unsigned int)1000, std::min((nBlockMaxSizeNetwork - 1000), nBlockMaxSize));
 
     // How much of the block should be dedicated to high-priority transactions,
@@ -178,10 +183,12 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
 
     {
         LOCK2(cs_main, mempool.cs);
+	
 
         CBlockIndex* pindexPrev = chainActive.Tip();
         const int nHeight = pindexPrev->nHeight + 1;
         CCoinsViewCache view(pcoinsTip);
+
 
         // Priority order to process transactions
         list<COrphan> vOrphan; // list memory doesn't move
@@ -297,6 +304,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
                 vecPriority.push_back(TxPriority(dPriority, feeRate, &mi->second.GetTx()));
         }
 
+	
         // Collect transactions into block
         uint64_t nBlockSize = 1000;
         uint64_t nBlockTx = 0;
@@ -422,6 +430,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
             }
         }
 
+	
         if (!fProofOfStake) {
             //Masternode and general budget payments
             FillBlockPayee(txNew, nFees, fProofOfStake, false);
@@ -434,7 +443,6 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
 
         nLastBlockTx = nBlockTx;
         nLastBlockSize = nBlockSize;
-        LogPrintf("CreateNewBlock(): total size %u\n", nBlockSize);
 
         // Compute final coinbase transaction.
         pblock->vtx[0].vin[0].scriptSig = CScript() << nHeight << OP_0;
@@ -450,29 +458,41 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
         pblock->nBits = GetNextWorkRequired(pindexPrev, pblock);
         pblock->nNonce = 0;
 
+
+	LogPrintf("CreateNewBlock chainActive.Height %d\n", chainActive.Height());
         //Calculate the accumulator checkpoint only if the previous cached checkpoint need to be updated
         uint256 nCheckpoint;
-        uint256 hashBlockLastAccumulated = chainActive[nHeight - (nHeight % 10) - 10]->GetBlockHash();
-        if (nHeight >= pCheckpointCache.first || pCheckpointCache.second.first != hashBlockLastAccumulated) {
-            //For the period before v2 activation, zEZY will be disabled and previous block's checkpoint is all that will be needed
-            pCheckpointCache.second.second = pindexPrev->nAccumulatorCheckpoint;
-            if (pindexPrev->nHeight + 1 >= Params().Zerocoin_Block_V2_Start()) {
-                AccumulatorMap mapAccumulators(Params().Zerocoin_Params(false));
-                if (fZerocoinActive && !CalculateAccumulatorCheckpoint(nHeight, nCheckpoint, mapAccumulators)) {
-                    LogPrintf("%s: failed to get accumulator checkpoint\n", __func__);
-                } else {
-                    // the next time the accumulator checkpoint should be recalculated ( the next height that is multiple of 10)
-                    pCheckpointCache.first = nHeight + (10 - (nHeight % 10));
+	uint256 hashBlockLastAccumulated = chainActive[nHeight - (nHeight % 10) - 10]->GetBlockHash();
 
-                    // the block hash of the last block used in the accumulator checkpoint calc. This will handle reorg situations.
-                    pCheckpointCache.second.first = hashBlockLastAccumulated;
-                    pCheckpointCache.second.second = nCheckpoint;
-                }
-            }
-        }
+	LogPrintf("CreateNewBlock hashBlockLastAccumulated \n");
+	if (nHeight >= pCheckpointCache.first || pCheckpointCache.second.first != hashBlockLastAccumulated) {
+	    LogPrintf("CreateNewBlock pCheckpointCache \n");
 
+	    //For the period before v2 activation, zEZY will be disabled and previous block's checkpoint is all that will be needed
+	    pCheckpointCache.second.second = pindexPrev->nAccumulatorCheckpoint;
+	    if (pindexPrev->nHeight + 1 >= Params().Zerocoin_Block_V2_Start()) {
+	        LogPrintf("CreateNewBlock Zerocoin_Block_V2_Start \n");
+
+	        AccumulatorMap mapAccumulators(Params().Zerocoin_Params(false));
+	        if (fZerocoinActive && !CalculateAccumulatorCheckpoint(nHeight, nCheckpoint, mapAccumulators)) {
+	            LogPrintf("%s: failed to get accumulator checkpoint\n", __func__);
+	        } else {
+		    LogPrintf("CreateNewBlock pCheckpointCache \n"); 	
+	            // the next time the accumulator checkpoint should be recalculated ( the next height that is multiple of 10)
+	            pCheckpointCache.first = nHeight + (10 - (nHeight % 10));
+
+	            // the block hash of the last block used in the accumulator checkpoint calc. This will handle reorg situations.
+	            pCheckpointCache.second.first = hashBlockLastAccumulated;
+	            pCheckpointCache.second.second = nCheckpoint;
+	        }
+	    }
+	}
+	
+	LogPrintf("CreateNewBlock nAccumulatorCheckpoint \n"); 	
         pblock->nAccumulatorCheckpoint = pCheckpointCache.second.second;
         pblocktemplate->vTxSigOps[0] = GetLegacySigOpCount(pblock->vtx[0]);
+
+	LogPrintf("CreateNewBlock TestBlockValidity \n");
 
         CValidationState state;
         if (!TestBlockValidity(state, *pblock, pindexPrev, false, false)) {
@@ -577,6 +597,11 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("eazy-miner");
 
+    //LogPrintf("BitcoinMiner miner profOfStake:%b\n", fProofOfStake);	
+    //LogPrintf("BitcoinMiner miner generateBitcoins:%b\n", fGenerateBitcoins);
+
+    //fGenerateBitcoins = true;
+    //fProofOfStake = false;	
     // Each thread has its own key and counter
     CReserveKey reservekey(pwallet);
     unsigned int nExtraNonce = 0;
@@ -594,7 +619,7 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
                 MilliSleep(5000);
                 continue;
             }
-
+	
             while (vNodes.empty() || pwallet->IsLocked() || !fMintableCoins || (pwallet->GetBalance() > 0 && nReserveBalance >= pwallet->GetBalance()) || !masternodeSync.IsSynced()) {
                 nLastCoinStakeSearchInterval = 0;
                 // Do a separate 1 minute check here to ensure fMintableCoins is updated
@@ -620,6 +645,7 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
             }
         }
 
+	LogPrintf("BitcoinMiner GetTransactionsUpdated\n");
         //
         // Create new block
         //
@@ -628,6 +654,7 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
         if (!pindexPrev)
             continue;
 
+	LogPrintf("BitcoinMiner CreateNewBlockWithKey\n");
         unique_ptr<CBlockTemplate> pblocktemplate(CreateNewBlockWithKey(reservekey, pwallet, fProofOfStake));
         if (!pblocktemplate.get())
             continue;
@@ -635,6 +662,7 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
         CBlock* pblock = &pblocktemplate->block;
         IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
 
+	LogPrintf("BitcoinMiner Stake miner main\n");
         //Stake miner main
         if (fProofOfStake) {
             LogPrintf("CPUMiner : proof-of-stake block found %s \n", pblock->GetHash().ToString().c_str());
@@ -776,6 +804,9 @@ void GenerateBitcoins(bool fGenerate, CWallet* pwallet, int nThreads)
             nThreads = boost::thread::hardware_concurrency();
     }
 
+    //LogPrintf("GenerateBitcoins threads:%d", nThreads);
+	
+
     if (minerThreads != NULL) {
         minerThreads->interrupt_all();
         delete minerThreads;
@@ -784,6 +815,8 @@ void GenerateBitcoins(bool fGenerate, CWallet* pwallet, int nThreads)
 
     if (nThreads == 0 || !fGenerate)
         return;
+
+    //LogPrintf("GenerateBitcoins creating miner threads:%d", nThreads);	
 
     minerThreads = new boost::thread_group();
     for (int i = 0; i < nThreads; i++)

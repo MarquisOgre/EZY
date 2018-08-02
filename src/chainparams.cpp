@@ -126,10 +126,10 @@ public:
         nTargetSpacing = 1 * 60;  // EAZY: 1 minute
         nMaturity = 100;
         nMasternodeCountDrift = 20;
-        nMaxMoneyOut = 21000000 * COIN;
+        nMaxMoneyOut = 33800000 * COIN;
 
         /** Height or Time Based Activations **/
-        nLastPOWBlock = 259200;
+        nLastPOWBlock = 1000;
         nModifierUpdateBlock = 10;
         nZerocoinStartHeight = 10;
         nZerocoinStartTime = 1533119894; // 31.7.2018 // 1508214600; // October 17, 2017 4:30:00 AM
@@ -155,14 +155,12 @@ public:
          *   vMerkleTree: e0028e
          */
 
-//python ~/genesis.py -a quark-hash -z "Impossible to make Mars like Earth, First ever wholphin hybrid spotted in wild, Tuesday 31 July 2018" -t 1533118894 -v 0 -p 0455437c027c8aba1d355122487d722832a95029e1969f6110464680386e0c46fb32c8aa91c66f1c29d26f0c8a83c06420ecf0069988289db0a9949c8cea1002ec
-
         const char* pszTimestamp = "Impossible to make Mars like Earth, First ever wholphin hybrid spotted in wild, Tuesday 31 July 2018";
         CMutableTransaction txNew;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
-        txNew.vout[0].nValue = 0 * COIN;
+        txNew.vout[0].nValue = 10001 * COIN;
         txNew.vout[0].scriptPubKey = CScript() << ParseHex("0455437c027c8aba1d355122487d722832a95029e1969f6110464680386e0c46fb32c8aa91c66f1c29d26f0c8a83c06420ecf0069988289db0a9949c8cea1002ec") << OP_CHECKSIG;
         genesis.vtx.push_back(txNew);
         genesis.hashPrevBlock = 0;
@@ -170,11 +168,12 @@ public:
         genesis.nVersion = 1;
         genesis.nTime = 1533118894; //new genesis block //1454124731;
         genesis.nBits = 0x1e0ffff0;//0x1e0ffff0;
-        genesis.nNonce = 1006276;
+        genesis.nNonce = 944995;
 
 	hashGenesisBlock = genesis.GetHash();	
 	// If genesis block hash does not match, then generate new genesis hash.
-    /*if (true)// && genesis.GetHash() != hashGenesisBlock)
+/*
+    if (true)// && genesis.GetHash() != hashGenesisBlock)
     {
         printf("Searching for genesis block...\n");
         // This will figure out a valid hash and Nonce if you're
@@ -201,15 +200,15 @@ public:
         printf("block.nTime = %u \n", genesis.nTime);
         printf("block.nNonce = %u \n", genesis.nNonce);
         printf("block.GetHash = %s\n", genesis.GetHash().ToString().c_str());
-    }*/
-
+    }
+*/
         
 	//printf("block            %s\n", genesis.ToString().c_str());
 	//printf("hashGenesisBlock %s\n", hashGenesisBlock.ToString().c_str());
         //printf("merkleRoot       %s\n", genesis.hashMerkleRoot.ToString().c_str());
 
-        assert(hashGenesisBlock == uint256("0x00000443bb770408c890f714a65052da1087a3e0894570d643df3948afc18661"));
-        assert(genesis.hashMerkleRoot == uint256("0x25bbea0455b3c5a11b8d7a35dde3f9a8064944a72edfd889ca9513f4094513f7"));
+        assert(hashGenesisBlock == uint256("0x000004979bf2a7f302e6638789d172940d7d6977a3c5320b57e2279b2a5223e5"));
+        assert(genesis.hashMerkleRoot == uint256("0x3db410cba9d0f7061cfb8c3d4c3da54eefdb752a890e0bcd37c1e85142b8698b"));
 
         //vSeeds.push_back(CDNSSeedData("144.76.74.66", "144.76.74.66"));           // Single node address
 
@@ -228,7 +227,7 @@ public:
         fAllowMinDifficultyBlocks = false;
         fDefaultConsistencyChecks = false;
         fRequireStandard = true;
-        fMineBlocksOnDemand = false;
+        fMineBlocksOnDemand = true; // false
         fSkipProofOfWorkCheck = false;
         fTestnetToBeDeprecatedFieldRPC = false;
         fHeadersFirstSyncingActive = false;
@@ -284,10 +283,10 @@ public:
         nEnforceBlockUpgradeMajority = 51;
         nRejectBlockOutdatedMajority = 75;
         nToCheckBlockUpgradeMajority = 100;
-        nMinerThreads = 0;
+        nMinerThreads = 1;
         nTargetTimespan = 1 * 60; // EAZY: 1 day
         nTargetSpacing = 1 * 60;  // EAZY: 1 minute
-        nLastPOWBlock = 200;
+        nLastPOWBlock = 1000;
         nMaturity = 15;
         nMasternodeCountDrift = 4;
         nModifierUpdateBlock = 51197; //approx Mon, 17 Apr 2017 04:00:00 GMT
@@ -306,11 +305,12 @@ public:
 
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1533115436; // new
-        genesis.nNonce = 1753581;
+        genesis.nNonce = 2814417;
 
         hashGenesisBlock = genesis.GetHash();
 
-        assert(hashGenesisBlock == uint256("0x000007e3b29bbbdeb3bfec836e9ddfb483be60e5eabb6c5230385456685e0a38"));
+
+        assert(hashGenesisBlock == uint256("0x00000a2e463bcb307c25213128ef42670aaa932ad028e6a83fc489f952540847"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
@@ -376,17 +376,13 @@ public:
         bnProofOfWorkLimit = ~uint256(0) >> 1;
         //genesis.nTime = 1533045651;// new 1454124731;
         genesis.nBits = 504365040;//0x207fffff;
-        //genesis.nNonce = 12345;
-
-        //hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 51476;
-        //assert(hashGenesisBlock == uint256("0x4f023a2120d9127b21bbad01724fdb79b519f593f2a85b60d3d79160ec5f29df"));
-
+ 
 	genesis.nTime = 1533115436; // new
-        genesis.nNonce = 1753581;
+        genesis.nNonce = 875561;
 
         hashGenesisBlock = genesis.GetHash();
-        assert(hashGenesisBlock == uint256("0x000007e3b29bbbdeb3bfec836e9ddfb483be60e5eabb6c5230385456685e0a38"));
+        assert(hashGenesisBlock == uint256("0x0000051ec24504b8ace23c04cefd27ac64ea4f88968358a5bdb556c1296d8dbf"));
 
         vFixedSeeds.clear(); //! Testnet mode doesn't have any fixed seeds.
         vSeeds.clear();      //! Testnet mode doesn't have any DNS seeds.

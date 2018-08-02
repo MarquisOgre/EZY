@@ -1903,7 +1903,7 @@ CAmount GetSeeSaw(const CAmount& blockValue, int nMasternodeCount, int nHeight)
     CAmount ret = 0;
     if (mNodeCoins == 0) {
         ret = 0;
-    } else if (nHeight <= 325000) {
+    } else if (nHeight <= 1000) {
         if (mNodeCoins <= (nMoneySupply * .05) && mNodeCoins > 0) {
             ret = blockValue * .85;
         } else if (mNodeCoins <= (nMoneySupply * .1) && mNodeCoins > (nMoneySupply * .05)) {
@@ -1937,7 +1937,7 @@ CAmount GetSeeSaw(const CAmount& blockValue, int nMasternodeCount, int nHeight)
         } else {
             ret = blockValue * .1;
         }
-    } else if (nHeight > 325000) {
+    } else if (nHeight > 1000) {
         if (mNodeCoins <= (nMoneySupply * .01) && mNodeCoins > 0) {
             ret = blockValue * .90;
         } else if (mNodeCoins <= (nMoneySupply * .02) && mNodeCoins > (nMoneySupply * .01)) {
@@ -2122,8 +2122,11 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
     if (Params().NetworkID() == CBaseChainParams::TESTNET) {
         if (nHeight < 200)
             return 0;
-    }
+    } 
 
+    ret = blockValue;
+
+/*
     if (nHeight <= 43200) {
         ret = blockValue / 5;
     } else if (nHeight < 86400 && nHeight > 43200) {
@@ -2140,7 +2143,7 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
         if (isZEZYStake)
             ret = 2 * COIN;
     }
-
+*/
     return ret;
 }
 
