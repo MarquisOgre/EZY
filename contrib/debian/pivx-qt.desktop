@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=EAZY
+Comment=EAZY P2P Cryptocurrency
+Comment[fr]=EAZY, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=EAZY, eşten eşe kriptografik sanal para birimi
+Exec=eazy-qt %u
+Terminal=false
+Type=Application
+Icon=eazy128
+MimeType=x-scheme-handler/eazy;
+Categories=Office;Finance;

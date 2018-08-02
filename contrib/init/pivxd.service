@@ -1,0 +1,26 @@
+[Unit]
+Description=EAZY's distributed currency daemon
+After=network.target
+
+[Service]
+User=eazy
+Group=eazy
+
+Type=forking
+PIDFile=/var/lib/eazyd/eazyd.pid
+
+ExecStart=/usr/bin/eazyd -daemon -pid=/var/lib/eazyd/eazyd.pid \
+          -conf=/etc/eazy/eazy.conf -datadir=/var/lib/eazyd
+
+ExecStop=-/usr/bin/eazy-cli -conf=/etc/eazy/eazy.conf \
+         -datadir=/var/lib/eazyd stop
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target
