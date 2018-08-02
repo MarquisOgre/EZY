@@ -35,16 +35,16 @@ Only premine
      
 <table>
 <th>Phase</th><th>Block Height</th><th>Reward</th><th>Masternodes & Stakers</th><th>Budget</th>
-<tr><td>Phase 1 </td><td>1000 - 9999</td><td>9.5</td><td>90% (45)</td><td>10% (5)</td></tr>
-<tr><td>Phase 2 </td><td>10k  - 19999</td><td>12</td><td>90% (40.5)</td><td>10% (4.5)</td></tr>
-<tr><td>Phase 3 </td><td>20k  - 24999</td><td>18</td><td>90% (36)</td><td>10% (4)</td></tr>
-<tr><td>Phase 4 </td><td>25k  - 49999</td><td>14.5</td><td>90% (31.5)</td><td>10% (3.5)</td></tr>
-<tr><td>Phase 5 </td><td>50k  - 99999</td><td>11.5</td><td>90% (27)</td><td>10% (3)</td></tr>
-<tr><td>Phase 6 </td><td>100k - 249999</td><td>8.5</td><td>90% (22.5)</td><td>10% (2.5)</td></tr>
-<tr><td>Phase 7 </td><td>250k - 499999</td><td>6.5</td><td>90% (18)</td><td>10% (2)</td></tr>
-<tr><td>Phase 8 </td><td>500k - 999999</td><td>5</td><td>90% (13.5)</td><td>10% (1.5)</td></tr>
-<tr><td>Phase 9 </td><td>1M   -2499999</td><td>3.75</td><td>90% (9)</td><td>10% (1)</td></tr>
-<tr><td>Phase 10</td><td>2.5M -4999999</td><td>3.25</td><td>90% (4.5)</td><td>10% (0.5)</td></tr>
-<tr><td>Phase 11</td><td>5M   -7499999</td><td>2.75</td><td>90% (4.5)</td><td>10% (0.5)</td></tr>
-<tr><td>Phase 12</td><td>7.5M -9999999</td><td>2</td><td>90% (4.5)</td><td>10% (0.5)</td></tr>
+<tr><td>Phase 1 </td><td>1000 - 9999</td><td>9.5</td><td>90%</td><td>10%</td></tr>
+<tr><td>Phase 2 </td><td>10k  - 19999</td><td>12</td><td>90%</td><td>10%</td></tr>
+<tr><td>Phase 3 </td><td>20k  - 24999</td><td>18</td><td>90%</td><td>10%</td></tr>
+<tr><td>Phase 4 </td><td>25k  - 49999</td><td>14.5</td><td>90%</td><td>10%</td></tr>
+<tr><td>Phase 5 </td><td>50k  - 99999</td><td>11.5</td><td>90%</td><td>10%</td></tr>
+<tr><td>Phase 6 </td><td>100k - 249999</td><td>8.5</td><td>90%</td><td>10%</td></tr>
+<tr><td>Phase 7 </td><td>250k - 499999</td><td>6.5</td><td>90%</td><td>10%</td></tr>
+<tr><td>Phase 8 </td><td>500k - 999999</td><td>5</td><td>90%</td><td>10%</td></tr>
+<tr><td>Phase 9 </td><td>1M   -2499999</td><td>3.75</td><td>90%</td><td>10%</td></tr>
+<tr><td>Phase 10</td><td>2.5M -4999999</td><td>3.25</td><td>90%</td><td>10%</td></tr>
+<tr><td>Phase 11</td><td>5M   -7499999</td><td>2.75</td><td>90%</td><td>10%</td></tr>
+<tr><td>Phase 12</td><td>7.5M -9999999</td><td>2</td><td>90%</td><td>10%</td></tr>
 </table>
