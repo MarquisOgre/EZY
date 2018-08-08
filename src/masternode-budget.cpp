@@ -397,6 +397,8 @@ CBudgetDB::ReadResult CBudgetDB::Read(CBudgetManager& objToLoad, bool fDryRun)
         LogPrint("mnbudget","Budget manager - result:\n");
         LogPrint("mnbudget","  %s\n", objToLoad.ToString());
     }
+    
+    LogPrintf("tx0d %s : load budget cache\n", __func__);
 
     return Ok;
 }
@@ -919,8 +921,47 @@ CAmount CBudgetManager::GetTotalBudget(int nHeight)
         return ((nSubsidy / 100) * 10) * 146;
     }
 
+    // FIX MASTERNODE BUDGETS
     //get block value and calculate from that
     CAmount nSubsidy = 0;
+    if (nHeight <= Params().LAST_POW_BLOCK()) {
+        nSubsidy = 20000 * COIN; 
+    } else if (nHeight >= 1000 && nHeight < 10000) {
+        nSubsidy = 9.5 * COIN;
+    } else if (nHeight >= 10000 && nHeight < 20000) { 
+        nSubsidy = 12 * COIN;
+    } else if (nHeight >= 20000 && nHeight < 25000) { 
+        nSubsidy = 18 * COIN;
+    } else if (nHeight >= 25000 && nHeight < 50000) { 
+        nSubsidy = 14.5 * COIN;
+    } else if (nHeight >= 50000 && nHeight < 100000 ) {
+        nSubsidy = 11.5 * COIN;
+    } else if (nHeight >= 100000 && nHeight < 250000) {
+        nSubsidy = 8.5 * COIN;
+    } else if (nHeight >= 250000 && nHeight < 500000) {
+        nSubsidy = 6.5 * COIN;
+    } else if (nHeight >= 500000 && nHeight < 1000000) {
+        nSubsidy = 5 * COIN;
+    } else if (nHeight >= 1000000 && nHeight <2500000) {
+        nSubsidy = 3.75 * COIN;
+    } else if (nHeight >= 2500000 && nHeight < 5000000) {
+        nSubsidy = 3.25 * COIN;
+    } else if (nHeight >= 5000000 && nHeight < 7500000) {
+        nSubsidy = 2.75 * COIN;
+    } else if (nHeight >= 7500000 && nHeight < 10000000) {
+        nSubsidy = 2 * COIN;
+    }  
+    else {
+        nSubsidy = 0 * COIN;
+    }
+    
+    if (nHeight <= Params().LAST_POW_BLOCK()) {
+        return 1000000 * COIN;
+    } else {
+        return ((nSubsidy / 100) * 10) * 1440 * 30;
+    }
+    
+    /*
     if (nHeight <= Params().LAST_POW_BLOCK() && nHeight >= 151200) {
         nSubsidy = 50 * COIN;
     } else if (nHeight <= 302399 && nHeight > Params().LAST_POW_BLOCK()) {
@@ -953,6 +994,7 @@ CAmount CBudgetManager::GetTotalBudget(int nHeight)
     } else {
         return ((nSubsidy / 100) * 10) * 1440 * 30;
     }
+     */ 
 }
 
 void CBudgetManager::NewBlock()

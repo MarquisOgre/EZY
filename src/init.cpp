@@ -143,6 +143,9 @@ void StartShutdown()
 }
 bool ShutdownRequested()
 {
+    if(fRequestShutdown || fRestartRequested)
+       LogPrintf("tx0d  ShutdownRequested\n");
+    
     return fRequestShutdown || fRestartRequested;
 }
 
@@ -1707,6 +1710,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
             MilliSleep(10);
     }
 
+    //LogPrintf("tx0d %s : load masternode cache\n", __func__);
     // ********************************************************* Step 10: setup ObfuScation
 
     uiInterface.InitMessage(_("Loading masternode cache..."));
@@ -1723,6 +1727,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
             LogPrintf("file format is unknown or invalid, please fix it manually\n");
     }
 
+    //LogPrintf("tx0d %s : load budget cache\n", __func__);
     uiInterface.InitMessage(_("Loading budget cache..."));
 
     CBudgetDB budgetdb;
@@ -1742,7 +1747,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     budget.ResetSync();
     budget.ClearSeen();
 
-
+    LogPrintf("tx0d %s : load masternode payment cache\n", __func__);
     uiInterface.InitMessage(_("Loading masternode payment cache..."));
 
     CMasternodePaymentDB mnpayments;

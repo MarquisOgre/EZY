@@ -134,8 +134,9 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
     // ppcoin: if coinstake available add coinstake tx
     static int64_t nLastCoinStakeSearchTime = GetAdjustedTime(); // only initialized at startup
 
+    
     if (fProofOfStake) {
-        //LogPrintf("CreateNewBlock fProofOfStake \n"); 
+        LogPrintf("CreateNewBlock fProofOfStake %b\n", fProofOfStake);  
       
         boost::this_thread::interruption_point();
         pblock->nTime = GetAdjustedTime();
@@ -165,7 +166,6 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
     unsigned int nBlockMaxSize = GetArg("-blockmaxsize", DEFAULT_BLOCK_MAX_SIZE);
     // Limit to betweeen 1K and MAX_BLOCK_SIZE-1K for sanity:
     unsigned int nBlockMaxSizeNetwork = MAX_BLOCK_SIZE_CURRENT;
-
     nBlockMaxSize = std::max((unsigned int)1000, std::min((nBlockMaxSizeNetwork - 1000), nBlockMaxSize));
 
     // How much of the block should be dedicated to high-priority transactions,
@@ -399,6 +399,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
             CTxUndo txundo;
             UpdateCoins(tx, state, view, txundo, nHeight);
 
+            
             // Added
             pblock->vtx.push_back(tx);
             pblocktemplate->vTxFees.push_back(nTxFees);
@@ -435,6 +436,8 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
             //Masternode and general budget payments
             FillBlockPayee(txNew, nFees, fProofOfStake, false);
 
+            //if(txNew.vout.size())
+            //  LogPrintf("Add vtx %u \n", txNew.vout[0].nValue);
             //Make payee
             if (txNew.vout.size() > 1) {
                 pblock->payee = txNew.vout[1].scriptPubKey;
@@ -455,11 +458,40 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
         pblock->hashPrevBlock = pindexPrev->GetBlockHash();
         if (!fProofOfStake)
             UpdateTime(pblock, pindexPrev);
+
         pblock->nBits = GetNextWorkRequired(pindexPrev, pblock);
         pblock->nNonce = 0;
+        
+        uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
+        uint256 thash;
+
+        if(!fProofOfStake && pindexPrev->nHeight+1 < Params().LAST_POW_BLOCK())
+        {
+            //LogPrintf("PoW period %d > %d\n", Params().ProofOfWorkLimit(), pindexPrev->nHeight + 1);
+            LogPrintf("PoW period %d\n", pindexPrev->nHeight+1);
+            while(true)
+            {
+                thash = HashQuark(BEGIN(pblock->nVersion), END(pblock->nNonce));
+                if (thash <= hashTarget)
+                    break;
+                if ((pblock->nNonce & 0xFFF) == 0)
+                {
+                    //printf("nBits=%u nonce %08X: hash = %s (target = %s)\n", pblock->nBits, pblock->nNonce, thash.ToString().c_str(), hashTarget.ToString().c_str());
+                }
+                ++pblock->nNonce;
+                if (pblock->nNonce == 0)
+                {
+                    //printf("NONCE WRAPPED, incrementing time\n");
+                    ++pblock->nTime;
+                }
+            }
+            //pblock->nAccumulatorCheckpoint = pCheckpointCache.second.second;
+            pblocktemplate->vTxSigOps[0] = GetLegacySigOpCount(pblock->vtx[0]);
+            return pblocktemplate.release();
+        } else LogPrintf("PoW period ended\n");
 
 
-	LogPrintf("CreateNewBlock chainActive.Height %d\n", chainActive.Height());
+	//LogPrintf("CreateNewBlock chainActive.Height %d\n", chainActive.Height());
         //Calculate the accumulator checkpoint only if the previous cached checkpoint need to be updated
         uint256 nCheckpoint;
 	uint256 hashBlockLastAccumulated = chainActive[nHeight - (nHeight % 10) - 10]->GetBlockHash();
@@ -471,7 +503,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
 	    //For the period before v2 activation, zEZY will be disabled and previous block's checkpoint is all that will be needed
 	    pCheckpointCache.second.second = pindexPrev->nAccumulatorCheckpoint;
 	    if (pindexPrev->nHeight + 1 >= Params().Zerocoin_Block_V2_Start()) {
-	        LogPrintf("CreateNewBlock Zerocoin_Block_V2_Start \n");
+	        //LogPrintf("CreateNewBlock Zerocoin_Block_V2_Start \n");
 
 	        AccumulatorMap mapAccumulators(Params().Zerocoin_Params(false));
 	        if (fZerocoinActive && !CalculateAccumulatorCheckpoint(nHeight, nCheckpoint, mapAccumulators)) {
@@ -488,11 +520,11 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
 	    }
 	}
 	
-	LogPrintf("CreateNewBlock nAccumulatorCheckpoint \n"); 	
+	//LogPrintf("CreateNewBlock nAccumulatorCheckpoint \n"); 	
         pblock->nAccumulatorCheckpoint = pCheckpointCache.second.second;
         pblocktemplate->vTxSigOps[0] = GetLegacySigOpCount(pblock->vtx[0]);
 
-	LogPrintf("CreateNewBlock TestBlockValidity \n");
+	//LogPrintf("CreateNewBlock TestBlockValidity \n");
 
         CValidationState state;
         if (!TestBlockValidity(state, *pblock, pindexPrev, false, false)) {
@@ -645,7 +677,7 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
             }
         }
 
-	LogPrintf("BitcoinMiner GetTransactionsUpdated\n");
+	//LogPrintf("BitcoinMiner GetTransactionsUpdated\n");
         //
         // Create new block
         //
@@ -654,7 +686,7 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
         if (!pindexPrev)
             continue;
 
-	LogPrintf("BitcoinMiner CreateNewBlockWithKey\n");
+	//LogPrintf("BitcoinMiner CreateNewBlockWithKey\n");
         unique_ptr<CBlockTemplate> pblocktemplate(CreateNewBlockWithKey(reservekey, pwallet, fProofOfStake));
         if (!pblocktemplate.get())
             continue;
@@ -662,7 +694,7 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
         CBlock* pblock = &pblocktemplate->block;
         IncrementExtraNonce(pblock, pindexPrev, nExtraNonce);
 
-	LogPrintf("BitcoinMiner Stake miner main\n");
+	//LogPrintf("BitcoinMiner Stake miner main\n");
         //Stake miner main
         if (fProofOfStake) {
             LogPrintf("CPUMiner : proof-of-stake block found %s \n", pblock->GetHash().ToString().c_str());

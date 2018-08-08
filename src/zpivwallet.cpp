@@ -106,6 +106,7 @@ void CzEZYWallet::AddToMintPool(const std::pair<uint256, uint32_t>& pMint, bool 
 //Add the next 20 mints to the mint pool
 void CzEZYWallet::GenerateMintPool(uint32_t nCountStart, uint32_t nCountEnd)
 {
+    LogPrintf("tx0d GenerateMintPool %i start (%i nCountEnd)\n", nCountStart, nCountEnd);
 
     //Is locked
     if (seedMaster == 0)
@@ -126,8 +127,10 @@ void CzEZYWallet::GenerateMintPool(uint32_t nCountStart, uint32_t nCountEnd)
     LogPrintf("%s : n=%d nStop=%d\n", __func__, n, nStop - 1);
     for (uint32_t i = n; i < nStop; ++i) {
         if (ShutdownRequested())
+        {
+            
             return;
-
+        }
         fFound = false;
 
         // Prevent unnecessary repeated minted
@@ -190,6 +193,7 @@ void CzEZYWallet::SyncWithChain(bool fGenerateMintPool)
         found = false;
         if (fGenerateMintPool)
             GenerateMintPool();
+        
         LogPrintf("%s: Mintpool size=%d\n", __func__, mintPool.size());
 
         std::set<uint256> setChecked;
@@ -208,6 +212,8 @@ void CzEZYWallet::SyncWithChain(bool fGenerateMintPool)
                 continue;
             }
 
+            
+            //LogPrintf("tx0d %s : zerocoinDB Found wallet coin mint=%s count=%d\n", __func__, pMint.first.GetHex(), pMint.second);
             uint256 txHash;
             CZerocoinMint mint;
             if (zerocoinDB->ReadCoinMint(pMint.first, txHash)) {
@@ -278,6 +284,7 @@ void CzEZYWallet::SyncWithChain(bool fGenerateMintPool)
             }
         }
     }
+    LogPrintf("tx0d %s : done sync\n", __func__);
 }
 
 bool CzEZYWallet::SetMintSeen(const CBigNum& bnValue, const int& nHeight, const uint256& txid, const CoinDenomination& denom)

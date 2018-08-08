@@ -1813,38 +1813,38 @@ int64_t GetBlockValue(int nHeight)
     }
 
     int64_t nSubsidy = 0;
-    if (nHeight == 0) {
-        nSubsidy = 10000 * COIN; // TODO are we sure 1m premine ? 
-    } else if (nHeight <= 1000 && nHeight > 0) {
-        nSubsidy = 700 * COIN; // only premine;
+    if (nHeight <= Params().LAST_POW_BLOCK()) {
+        nSubsidy = 20000 * COIN; // only premine;
     } else if (nHeight >= 1000 && nHeight < 10000) {
-        nSubsidy = 9.5 * COIN;
+        nSubsidy = 2* 9.5 * COIN;
     } else if (nHeight >= 10000 && nHeight < 20000) { 
-        nSubsidy = 12 * COIN;
+        nSubsidy = 2* 12 * COIN;
     } else if (nHeight >= 20000 && nHeight < 25000) { 
-        nSubsidy = 18 * COIN;
+        nSubsidy = 2* 18 * COIN;
     } else if (nHeight >= 25000 && nHeight < 50000) { 
-        nSubsidy = 14.5 * COIN;
+        nSubsidy = 2* 14.5 * COIN;
     } else if (nHeight >= 50000 && nHeight < 100000 ) {
-        nSubsidy = 11.5 * COIN;
+        nSubsidy = 2* 11.5 * COIN;
     } else if (nHeight >= 100000 && nHeight < 250000) {
-        nSubsidy = 8.5 * COIN;
+        nSubsidy = 2* 8.5 * COIN;
     } else if (nHeight >= 250000 && nHeight < 500000) {
-        nSubsidy = 6.5 * COIN;
+        nSubsidy = 2* 6.5 * COIN;
     } else if (nHeight >= 500000 && nHeight < 1000000) {
-        nSubsidy = 5 * COIN;
-    } else if (nHeight >= 1000000 && nHeight <2500000) {
-        nSubsidy = 3.75 * COIN;
+        nSubsidy = 2* 5 * COIN;
+    } else if (nHeight >= 1000000 && nHeight < 2500000) {
+        nSubsidy = 2* 3.75 * COIN;
     } else if (nHeight >= 2500000 && nHeight < 5000000) {
-        nSubsidy = 3.25 * COIN;
+        nSubsidy = 2* 3.25 * COIN;
     } else if (nHeight >= 5000000 && nHeight < 7500000) {
-        nSubsidy = 2.75 * COIN;
+        nSubsidy = 2* 2.75 * COIN;
     } else if (nHeight >= 7500000 && nHeight < 10000000) {
-        nSubsidy = 2 * COIN;
+        nSubsidy = 2* 2 * COIN;
     }  
     else {
-        nSubsidy = 0 * COIN;
+        nSubsidy = 1 * COIN;
     }
+    
+    LogPrintf("GetBlockValue nHeight %u .nSubsidy = %d \n", nHeight, nSubsidy);
 /*
     if (nHeight == 0) {
         nSubsidy = 60001 * COIN;
@@ -2112,6 +2112,8 @@ CAmount GetSeeSaw(const CAmount& blockValue, int nMasternodeCount, int nHeight)
             ret = blockValue * .01;
         }
     }
+    
+    LogPrintf("GetSeeSaw blockValue %d .nMoneySupply = %f mNodeCoins=%f \n", blockValue, nMoneySupply, mNodeCoins);
     return ret;
 }
 
@@ -2123,8 +2125,48 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
         if (nHeight < 200)
             return 0;
     } 
+    
+    int64_t nSubsidy = 0;
+    if (nHeight <= Params().LAST_POW_BLOCK()) {
+        nSubsidy = 0.000001 * COIN; 
+    } else if (nHeight >= 1000 && nHeight < 10000) {
+        nSubsidy = 9.5 * COIN;
+    } else if (nHeight >= 10000 && nHeight < 20000) { 
+        nSubsidy = 12 * COIN;
+    } else if (nHeight >= 20000 && nHeight < 25000) { 
+        nSubsidy = 18 * COIN;
+    } else if (nHeight >= 25000 && nHeight < 50000) { 
+        nSubsidy = 14.5 * COIN;
+    } else if (nHeight >= 50000 && nHeight < 100000 ) {
+        nSubsidy = 11.5 * COIN;
+    } else if (nHeight >= 100000 && nHeight < 250000) {
+        nSubsidy = 8.5 * COIN;
+    } else if (nHeight >= 250000 && nHeight < 500000) {
+        nSubsidy = 6.5 * COIN;
+    } else if (nHeight >= 500000 && nHeight < 1000000) {
+        nSubsidy = 5 * COIN;
+    } else if (nHeight >= 1000000 && nHeight <2500000) {
+        nSubsidy = 3.75 * COIN;
+    } else if (nHeight >= 2500000 && nHeight < 5000000) {
+        nSubsidy = 3.25 * COIN;
+    } else if (nHeight >= 5000000 && nHeight < 7500000) {
+        nSubsidy = 2.75 * COIN;
+    } else if (nHeight >= 7500000 && nHeight < 10000000) {
+        nSubsidy = 2 * COIN;
+    }  
+    else {
+        nSubsidy = 0.5 * COIN;
+    }
+    
+    ret = nSubsidy;
 
-    ret = blockValue;
+    /*if (nHeight < 1000){
+        ret = 100*COIN;
+    } else if (nHeight < Params().Zerocoin_Block_V2_Start()) {
+        return GetSeeSaw(blockValue, nMasternodeCount, nHeight);
+    } 
+    else*/
+    //    ret = blockValue/2;
 
 /*
     if (nHeight <= 43200) {
@@ -2144,6 +2186,7 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
             ret = 2 * COIN;
     }
 */
+    LogPrintf("GetMasternodePayment height %u blockValue %d nMasternodeCount = %d stake %b\n", nHeight, blockValue, nMasternodeCount, isZEZYStake);
     return ret;
 }
 
@@ -2665,6 +2708,8 @@ void RecalculateZEZYMinted()
     CBlockIndex *pindex = chainActive[Params().Zerocoin_StartHeight()];
     int nHeightEnd = chainActive.Height();
     while (true) {
+        if(pindex==NULL) break;
+        
         if (pindex->nHeight % 1000 == 0)
             LogPrintf("%s : block %d...\n", __func__, pindex->nHeight);
 
@@ -3696,6 +3741,7 @@ static bool ActivateBestChainStep(CValidationState& state, CBlockIndex* pindexMo
     else
         CheckForkWarningConditions();
 
+    LogPrintf("dt0x ActivateBestChainStep fInvalidFound %u\n", fInvalidFound);
     return true;
 }
 
@@ -3710,6 +3756,7 @@ bool ActivateBestChain(CValidationState& state, CBlock* pblock, bool fAlreadyChe
     CBlockIndex* pindexMostWork = NULL;
     do {
         boost::this_thread::interruption_point();
+        
 
         bool fInitialDownload;
         while (true) {
@@ -3718,7 +3765,7 @@ bool ActivateBestChain(CValidationState& state, CBlock* pblock, bool fAlreadyChe
                 MilliSleep(50);
                 continue;
             }
-
+            //LogPrintf("dt0x FindMostWorkChain  %u\n", pblock->nNonce);    
             pindexMostWork = FindMostWorkChain();
 
             // Whether we have anything to do at all.
@@ -3736,6 +3783,7 @@ bool ActivateBestChain(CValidationState& state, CBlock* pblock, bool fAlreadyChe
 
         // Notifications/callbacks that can run without cs_main
         if (!fInitialDownload) {
+            LogPrintf("dt0x ActivateBestChain FindMostWorkChain fInitialDownload %b\n", fInitialDownload);     
             uint256 hashNewTip = pindexNewTip->GetBlockHash();
             // Relay inventory, but don't relay old inventory during initial block download.
             int nBlockEstimate = Checkpoints::GetTotalBlocksEstimate();
@@ -3759,6 +3807,8 @@ bool ActivateBestChain(CValidationState& state, CBlock* pblock, bool fAlreadyChe
             }
         }
     } while (pindexMostWork != chainActive.Tip());
+    
+    LogPrintf("dt0x ActivateBestChain CheckBlockIndex checked:%b\n", fAlreadyChecked);     
     CheckBlockIndex();
 
     // Write changes periodically to disk, after relay.
@@ -3766,6 +3816,7 @@ bool ActivateBestChain(CValidationState& state, CBlock* pblock, bool fAlreadyChe
         return false;
     }
 
+    LogPrintf("dt0x ActivateBestChain OK %u\n", pblock->nNonce);
     return true;
 }
 
@@ -4056,19 +4107,21 @@ bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state, bool f
 bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig)
 {
     // These are checks that are independent of context.
-
+    // LogPrintf("CheckBlock IsProofOfWork %b\n", block.IsProofOfWork());
     // Check that the header is valid (particularly PoW).  This is mostly
     // redundant with the call in AcceptBlockHeader.
     if (!CheckBlockHeader(block, state, block.IsProofOfWork()))
         return state.DoS(100, error("CheckBlock() : CheckBlockHeader failed"),
             REJECT_INVALID, "bad-header", true);
 
+    // LogPrintf("CheckBlock GetBlockTime %b\n", block.GetBlockTime());
     // Check timestamp
     LogPrint("debug", "%s: block=%s  is proof of stake=%d\n", __func__, block.GetHash().ToString().c_str(), block.IsProofOfStake());
     if (block.GetBlockTime() > GetAdjustedTime() + (block.IsProofOfStake() ? 180 : 7200)) // 3 minute future drift for PoS
         return state.Invalid(error("CheckBlock() : block timestamp too far in the future"),
             REJECT_INVALID, "time-too-new");
 
+    // LogPrintf("CheckBlock fCheckMerkleRoot %b\n", fCheckMerkleRoot);
     // Check the merkle root.
     if (fCheckMerkleRoot) {
         bool mutated;
@@ -4088,6 +4141,8 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
     // All potential-corruption validation must be done before we do any
     // transaction validation, as otherwise we may mark the header as invalid
     // because we receive the wrong transactions for it.
+    
+    //LogPrintf("CheckBlock block.vtx %u\n", block.vtx.size());
 
     // Size limits
     unsigned int nMaxBlockSize = MAX_BLOCK_SIZE_CURRENT;
@@ -4095,15 +4150,19 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
         return state.DoS(100, error("CheckBlock() : size limits failed"),
             REJECT_INVALID, "bad-blk-length");
 
+    //LogPrintf("CheckBlock block.empty %b\n", block.vtx.empty());
     // First transaction must be coinbase, the rest must not be
     if (block.vtx.empty() || !block.vtx[0].IsCoinBase())
         return state.DoS(100, error("CheckBlock() : first tx is not coinbase"),
             REJECT_INVALID, "bad-cb-missing");
+    
+    //LogPrintf("CheckBlock IsCoinBase %u\n", block.vtx.size());
     for (unsigned int i = 1; i < block.vtx.size(); i++)
         if (block.vtx[i].IsCoinBase())
             return state.DoS(100, error("CheckBlock() : more than one coinbase"),
                 REJECT_INVALID, "bad-cb-multiple");
 
+    //LogPrintf("CheckBlock IsProofOfStake %b\n", block.IsProofOfStake());
     if (block.IsProofOfStake()) {
         // Coinbase output should be empty if proof-of-stake block
         if (block.vtx[0].vout.size() != 1 || !block.vtx[0].vout[0].IsEmpty())
@@ -4119,6 +4178,7 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
 
     // ----------- swiftTX transaction scanning -----------
     if (IsSporkActive(SPORK_3_SWIFTTX_BLOCK_FILTERING)) {
+        //LogPrintf("CheckBlock SPORK_3_SWIFTTX_BLOCK_FILTERING %b\n", block.IsProofOfStake());
         BOOST_FOREACH (const CTransaction& tx, block.vtx) {
             if (!tx.IsCoinBase()) {
                 //only reject blocks when it's based on complete consensus
@@ -4168,10 +4228,15 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
         }
     }
 
+    
     // Check transactions
     bool fZerocoinActive = block.GetBlockTime() > Params().Zerocoin_StartTime();
+    // LogPrintf("CheckBlock fZerocoinActive %u > %u, %b\n",  block.GetBlockTime(), Params().Zerocoin_StartTime(), fZerocoinActive);
+    
     vector<CBigNum> vBlockSerials;
     for (const CTransaction& tx : block.vtx) {
+        //LogPrintf("CheckBlock CTransaction %u version:%i\n",  tx.vout[0].nValue, tx.nVersion);
+        
         if (!CheckTransaction(tx, fZerocoinActive, chainActive.Height() + 1 >= Params().Zerocoin_Block_EnforceSerialRange(), state))
             return error("CheckBlock() : CheckTransaction failed");
 
@@ -4195,6 +4260,8 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
         nSigOps += GetLegacySigOpCount(tx);
     }
     unsigned int nMaxBlockSigOps = fZerocoinActive ? MAX_BLOCK_SIGOPS_CURRENT : MAX_BLOCK_SIGOPS_LEGACY;
+    
+    //LogPrintf("CheckBlock nMaxBlockSigOps %b\n", nSigOps > nMaxBlockSigOps);
     if (nSigOps > nMaxBlockSigOps)
         return state.DoS(100, error("CheckBlock() : out-of-bounds SigOpCount"),
             REJECT_INVALID, "bad-blk-sigops", true);
@@ -4566,6 +4633,8 @@ bool ProcessNewBlock(CValidationState& state, CNode* pfrom, CBlock* pblock, CDis
     int64_t nStartTime = GetTimeMillis();
     bool checked = CheckBlock(*pblock, state);
 
+    //LogPrintf("ProcessNewBlock %u\n", pblock->nNonce);
+    
     int nMints = 0;
     int nSpends = 0;
     for (const CTransaction tx : pblock->vtx) {
@@ -4595,6 +4664,7 @@ bool ProcessNewBlock(CValidationState& state, CNode* pfrom, CBlock* pblock, CDis
         }
     }
 
+    LogPrintf("MarkBlockAsReceived  %u\n", pblock->nNonce);
     {
         LOCK(cs_main);   // Replaces the former TRY_LOCK loop because busy waiting wastes too much resources
 
@@ -4614,9 +4684,11 @@ bool ProcessNewBlock(CValidationState& state, CNode* pfrom, CBlock* pblock, CDis
             return error ("%s : AcceptBlock FAILED", __func__);
     }
 
+    LogPrintf("dt0x ActivateBestChain  %u\n", pblock->nNonce);
     if (!ActivateBestChain(state, pblock, checked))
         return error("%s : ActivateBestChain failed", __func__);
 
+    LogPrintf("x ActivateBestChain  fLiteMode %b\n", fLiteMode);
     if (!fLiteMode) {
         if (masternodeSync.RequestedMasternodeAssets > MASTERNODE_SYNC_LIST) {
             obfuScationPool.NewBlock();
@@ -5240,6 +5312,7 @@ void static CheckBlockIndex()
         }
     }
 
+    LogPrintf("dt0x CheckBlockIndex CheckBlockIndex nodes:%d\n", nNodes); 
     // Check that we actually traversed the entire map.
     assert(nNodes == forward.size());
 }

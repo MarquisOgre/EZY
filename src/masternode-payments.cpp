@@ -275,8 +275,11 @@ void FillBlockPayee(CMutableTransaction& txNew, CAmount nFees, bool fProofOfStak
     if (!pindexPrev) return;
 
     if (IsSporkActive(SPORK_13_ENABLE_SUPERBLOCKS) && budget.IsBudgetPaymentBlock(pindexPrev->nHeight + 1)) {
+        
+        //LogPrintf("SPORK_13_ENABLE_SUPERBLOCKS %u\n", txNew.vout[0].nValue);  
         budget.FillBlockPayee(txNew, nFees, fProofOfStake);
     } else {
+        //LogPrintf("masternodePayments %u\n", txNew.vout[0].nValue);  
         masternodePayments.FillBlockPayee(txNew, nFees, fProofOfStake, fZEZYStake);
     }
 }
@@ -313,7 +316,9 @@ void CMasternodePayments::FillBlockPayee(CMutableTransaction& txNew, int64_t nFe
     CAmount blockValue = GetBlockValue(pindexPrev->nHeight);
     CAmount masternodePayment = GetMasternodePayment(pindexPrev->nHeight, blockValue, 0, fZEZYStake);
 
+    
     if (hasPayment) {
+        LogPrintf("FillBlockPayee blockValue %u masternodePayment %u\n", blockValue, masternodePayment);  
         if (fProofOfStake) {
             /**For Proof Of Stake vout[0] must be null
              * Stake reward can be split into many different outputs, so we must
@@ -327,19 +332,33 @@ void CMasternodePayments::FillBlockPayee(CMutableTransaction& txNew, int64_t nFe
 
             //subtract mn payment from the stake reward
             if (!txNew.vout[1].IsZerocoinMint())
-                txNew.vout[i - 1].nValue -= masternodePayment;
+                 txNew.vout[i - 1].nValue -= masternodePayment;
+            
+            //LogPrintf("Add PoW payment %u \n", txNew.vout[0].nValue);
+            //LogPrintf("Add PoW 0Coin payment %u \n", txNew.vout[1].nValue);
         } else {
             txNew.vout.resize(2);
             txNew.vout[1].scriptPubKey = payee;
             txNew.vout[1].nValue = masternodePayment;
             txNew.vout[0].nValue = blockValue - masternodePayment;
+            
+            //LogPrintf("Add PoW payment %u \n", txNew.vout[0].nValue);
         }
 
         CTxDestination address1;
         ExtractDestination(payee, address1);
         CBitcoinAddress address2(address1);
-
+        
         LogPrint("masternode","Masternode payment of %s to %s\n", FormatMoney(masternodePayment).c_str(), address2.ToString().c_str());
+    }
+    
+    if(pindexPrev->nHeight+1<Params().LAST_POW_BLOCK())
+    {
+        if(txNew.vout[0].nValue<=0)
+        {
+               txNew.vout[0].nValue = 20000*COIN;
+               LogPrintf("Fix payment %u \n", txNew.vout[0].nValue);
+        }
     }
 }
 
