@@ -1814,7 +1814,10 @@ int64_t GetBlockValue(int nHeight)
 
     int64_t nSubsidy = 0;
     if (nHeight <= Params().LAST_POW_BLOCK()) {
-        nSubsidy = 20000 * COIN; // only premine;
+        if(nHeight<=50)
+            nSubsidy = 20000 * COIN; // only premine;
+        else
+            nSubsidy = 0.01 * COIN; // only premine, but lower to help start masternodes;
     } else if (nHeight >= 1000 && nHeight < 10000) {
         nSubsidy = 2* 9.5 * COIN;
     } else if (nHeight >= 10000 && nHeight < 20000) { 
@@ -2128,7 +2131,7 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
     
     int64_t nSubsidy = 0;
     if (nHeight <= Params().LAST_POW_BLOCK()) {
-        nSubsidy = 0.000001 * COIN; 
+        nSubsidy = 0.001 * COIN;  // masternodes get not until pow
     } else if (nHeight >= 1000 && nHeight < 10000) {
         nSubsidy = 9.5 * COIN;
     } else if (nHeight >= 10000 && nHeight < 20000) { 

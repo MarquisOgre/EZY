@@ -925,7 +925,10 @@ CAmount CBudgetManager::GetTotalBudget(int nHeight)
     //get block value and calculate from that
     CAmount nSubsidy = 0;
     if (nHeight <= Params().LAST_POW_BLOCK()) {
-        nSubsidy = 20000 * COIN; 
+        if(nHeight<=50) 
+            nSubsidy = 20000 * COIN; // only premine;
+        else
+            nSubsidy = 1 * COIN; // only premine, but lower to help start masternodes;
     } else if (nHeight >= 1000 && nHeight < 10000) {
         nSubsidy = 9.5 * COIN;
     } else if (nHeight >= 10000 && nHeight < 20000) { 

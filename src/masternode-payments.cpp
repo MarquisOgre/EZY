@@ -351,13 +351,20 @@ void CMasternodePayments::FillBlockPayee(CMutableTransaction& txNew, int64_t nFe
         
         LogPrint("masternode","Masternode payment of %s to %s\n", FormatMoney(masternodePayment).c_str(), address2.ToString().c_str());
     }
-    
-    if(pindexPrev->nHeight+1<Params().LAST_POW_BLOCK())
+    else // has no payee 
     {
-        if(txNew.vout[0].nValue<=0)
+        LogPrintf("FillBlockNoPayee blockValue %u masternodePayment %u\n", blockValue, masternodePayment); 
+        if(pindexPrev->nHeight+1<Params().LAST_POW_BLOCK())
         {
-               txNew.vout[0].nValue = 20000*COIN;
-               LogPrintf("Fix payment %u \n", txNew.vout[0].nValue);
+            if(txNew.vout[0].nValue<=0)
+            {
+                if(pindexPrev->nHeight+1<50)
+                   txNew.vout[0].nValue = 20000*COIN;
+                else 
+                   txNew.vout[0].nValue = 0.001*COIN;
+                    
+                LogPrintf("Fix payment %u \n", txNew.vout[0].nValue);
+            }
         }
     }
 }

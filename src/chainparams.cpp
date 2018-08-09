@@ -129,10 +129,10 @@ public:
         nMaxMoneyOut = 33800000 * COIN;
 
         /** Height or Time Based Activations **/
-        nLastPOWBlock = 50;
+        nLastPOWBlock = 1000;
         nModifierUpdateBlock = 45;
-        nZerocoinStartHeight = 60;// 2000;
-        nZerocoinStartTime = 1533953838; // 31.7.2018 // 1508214600; // October 17, 2017 4:30:00 AM
+        nZerocoinStartHeight = 1060;// 2000;
+        nZerocoinStartTime = 1534953838; // 31.7.2018 // 1508214600; // October 17, 2017 4:30:00 AM
 
         nBlockEnforceSerialRange = 1; //Enforce serial range starting this block
         nBlockRecalculateAccumulators = 100; //Trigger a recalculation of accumulators
@@ -286,13 +286,13 @@ public:
         nMinerThreads = 0;
         nTargetTimespan = 1 * 60; // EAZY: 1 day
         nTargetSpacing = 1 * 60;  // EAZY: 1 minute
-        nLastPOWBlock = 50;
+        nLastPOWBlock = 1000;
         nMaturity = 10;
         nMasternodeCountDrift = 10;
         nModifierUpdateBlock = 45; //approx Mon, 17 Apr 2017 04:00:00 GMT
         nMaxMoneyOut = 43199500 * COIN;
-        nZerocoinStartHeight = 60; //2000;
-        nZerocoinStartTime = 1533953838;
+        nZerocoinStartHeight = 1060; //2000;
+        nZerocoinStartTime = 1534953838;
         nBlockEnforceSerialRange = 1; //Enforce serial range starting this block
         nBlockRecalculateAccumulators = 100; //Trigger a recalculation of accumulators
         nBlockFirstFraudulent = 100; //First block that bad serials emerged
