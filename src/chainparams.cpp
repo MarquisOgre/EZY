@@ -210,9 +210,9 @@ public:
         assert(hashGenesisBlock == uint256("0x000004979bf2a7f302e6638789d172940d7d6977a3c5320b57e2279b2a5223e5"));
         assert(genesis.hashMerkleRoot == uint256("0x3db410cba9d0f7061cfb8c3d4c3da54eefdb752a890e0bcd37c1e85142b8698b"));
 
-        //vSeeds.push_back(CDNSSeedData("144.76.74.66", "144.76.74.66"));           // Single node address
+        vSeeds.clear();           // Until we don't get any fixed seeds we're clear
 
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 33);
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 239);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 4);
         base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 212);
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x02)(0x2D)(0x25)(0x33).convert_to_container<std::vector<unsigned char> >();
@@ -233,7 +233,7 @@ public:
         fHeadersFirstSyncingActive = false;
 
         nPoolMaxTransactions = 3;
-        strSporkKey    = "0406f2d3efc6d5eddb60d828048af4724d1a9e84c0960fd92be95b2cc1339f9e337fdc15f9b5d0a52f5eeb4c721caf165f3010b960254d717ad7d3faf298414734";
+        strSporkKey    = "0461c4f82cdcccf677c3efd0761b923f7cf37f63f6ae5113e67430c09f567c6bb4da4308156539fad44401f77468c7353ed81fdf75e33977a0fefa8d789708e8b3";
         strSporkKeyOld = "044e9be076386fd0d763acf0cf565d61d2f7acf442d05f6a7f62dce9bc49039621315334b04128f126cd6e886220e08a932b015de6c9a48ffa6e579ec010d79b99";
         strObfuscationPoolDummyAddress = "D87q2gC9j6nNrnzCsg4aY6bHMLsT9nUhEw";
         nStartMasternodePayments = 1533048983; // July 31 // 1403728576; //Wed, 25 Jun 2014 20:36:16 GMT

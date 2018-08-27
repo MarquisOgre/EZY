@@ -29,8 +29,8 @@ packages:
 - "python"
 reference_datetime: "2015-06-01 00:00:00"
 remotes:
-- "url": "https://github.com/eazy-project/eazy.git"
-  "dir": "eazy"
+- "url": "https://github.com/EAZYCommunityNode/EZY.git"
+  "dir": "EZY"
 files: []
 script: |
 
@@ -114,7 +114,7 @@ script: |
   chmod +x ${WRAP_DIR}/${prog}
   done
 
-  cd eazy
+  cd EZY
   BASEPREFIX=`pwd`/depends
   # Build dependencies for each host
   for i in $HOSTS; do
