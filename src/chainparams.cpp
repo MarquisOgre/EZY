@@ -120,13 +120,13 @@ public:
         nMaxReorganizationDepth = 100;
         nEnforceBlockUpgradeMajority = 750;
         nRejectBlockOutdatedMajority = 950;
-        nToCheckBlockUpgradeMajority = 1000;
+        nToCheckBlockUpgradeMajority = 1000;   
         nMinerThreads = 0;
         nTargetTimespan = 1 * 60; // EAZY: 1 day
         nTargetSpacing = 1 * 60;  // EAZY: 1 minute
         nMaturity = 9;
         nMasternodeCountDrift = 10;
-        nMaxMoneyOut = 33800000 * COIN;
+        nMaxMoneyOut = 34528000 * COIN;
 
         /** Height or Time Based Activations **/
         nLastPOWBlock = 1000;
