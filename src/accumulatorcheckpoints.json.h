@@ -8,29 +8,29 @@
 #include <string>
 std::string GetMainCheckpoints() {
     std::string strMainCheckpoints = "[\n"
-            "  {\n"
+            /*"  {\n"
             "    \"height\": 0,\n"
-            "  }\n"
+            "  }\n"*/
             "]";
     return strMainCheckpoints;
 }
 
 std::string GetTestCheckpoints() {
     std::string strTestCheckpoints = "[\n"
-            "  {\n"
+            /*"  {\n"
             "    \"height\": 0,\n"
-	    //"    \"1\": \"0\"\n"
-            "  }\n"
+	    "    \"1\": \"0\"\n"
+            "  }\n"*/
             "]";
     return strTestCheckpoints;
 }
 
 std::string GetRegTestCheckpoints() {
     std::string strRegTestCheckpoints = "[\n"
-            "  {\n"
+            /*"  {\n"
             "    \"height\": 0,\n"
 	    //"    \"1\": \"0\"\n"
-            "  }\n"
+            "  }\n"*/
             "]";
     return strRegTestCheckpoints;
 }

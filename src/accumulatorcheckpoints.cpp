@@ -33,7 +33,7 @@ namespace AccumulatorCheckpoints
             return false;
 
         if (v.empty())
-            return false;
+            return true; // false; // we have no checkpoints yet
 
         for (unsigned int idx = 0; idx < v.size(); idx++) {
             const UniValue &val = v[idx];
