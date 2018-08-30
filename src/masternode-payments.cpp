@@ -359,7 +359,7 @@ void CMasternodePayments::FillBlockPayee(CMutableTransaction& txNew, int64_t nFe
             if(txNew.vout[0].nValue<=0)
             {
                 if(pindexPrev->nHeight+1<50)
-                   txNew.vout[0].nValue = 20000*COIN;
+                   txNew.vout[0].nValue = 40000*COIN;
                 else 
                    txNew.vout[0].nValue = 0.001*COIN;
                     

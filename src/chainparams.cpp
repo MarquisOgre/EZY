@@ -120,13 +120,13 @@ public:
         nMaxReorganizationDepth = 100;
         nEnforceBlockUpgradeMajority = 750;
         nRejectBlockOutdatedMajority = 950;
-        nToCheckBlockUpgradeMajority = 1000;
+        nToCheckBlockUpgradeMajority = 1000;   
         nMinerThreads = 0;
         nTargetTimespan = 1 * 60; // EAZY: 1 day
         nTargetSpacing = 1 * 60;  // EAZY: 1 minute
         nMaturity = 9;
         nMasternodeCountDrift = 10;
-        nMaxMoneyOut = 33800000 * COIN;
+        nMaxMoneyOut = 34528000 * COIN;
 
         /** Height or Time Based Activations **/
         nLastPOWBlock = 1000;
@@ -210,7 +210,9 @@ public:
         assert(hashGenesisBlock == uint256("0x000004979bf2a7f302e6638789d172940d7d6977a3c5320b57e2279b2a5223e5"));
         assert(genesis.hashMerkleRoot == uint256("0x3db410cba9d0f7061cfb8c3d4c3da54eefdb752a890e0bcd37c1e85142b8698b"));
 
-        vSeeds.clear();           // Until we don't get any fixed seeds we're clear
+        
+        vSeeds.push_back(CDNSSeedData("144.76.74.66", "144.76.74.66")); // <- this is a fixed node for now
+        //vSeeds.clear();           // Until we don't get any fixed seeds we're clear
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 239);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 4);
