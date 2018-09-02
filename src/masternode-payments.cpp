@@ -356,7 +356,7 @@ void CMasternodePayments::FillBlockPayee(CMutableTransaction& txNew, int64_t nFe
         LogPrintf("FillBlockNoPayee blockValue %u masternodePayment %u\n", blockValue, masternodePayment); 
         if(pindexPrev->nHeight+1<Params().LAST_POW_BLOCK())
         {
-            if(txNew.vout[0].nValue<=0)
+            if(txNew.vout[0].nValue<=0) 
             {
                 if(pindexPrev->nHeight+1<50)
                    txNew.vout[0].nValue = 40000*COIN;

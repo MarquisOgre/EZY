@@ -1815,39 +1815,41 @@ int64_t GetBlockValue(int nHeight)
     int64_t nSubsidy = 0;
     if (nHeight <= Params().LAST_POW_BLOCK()) {
         if(nHeight<=50)
-            nSubsidy = 20000 * COIN; // only premine;
+            nSubsidy = 40000 * COIN; // only premine;
         else
             nSubsidy = 0.01 * COIN; // only premine, but lower to help start masternodes;
     } else if (nHeight >= 1000 && nHeight < 10000) {
-        nSubsidy = 2* 9.5 * COIN;
+        nSubsidy =  9.5 * COIN;
     } else if (nHeight >= 10000 && nHeight < 20000) { 
-        nSubsidy = 2* 12 * COIN;
+        nSubsidy =  12 * COIN;
     } else if (nHeight >= 20000 && nHeight < 25000) { 
-        nSubsidy = 2* 18 * COIN;
+        nSubsidy =  18 * COIN;
     } else if (nHeight >= 25000 && nHeight < 50000) { 
-        nSubsidy = 2* 14.5 * COIN;
+        nSubsidy =  14.5 * COIN;
     } else if (nHeight >= 50000 && nHeight < 100000 ) {
-        nSubsidy = 2* 11.5 * COIN;
+        nSubsidy =  11.5 * COIN;
     } else if (nHeight >= 100000 && nHeight < 250000) {
-        nSubsidy = 2* 8.5 * COIN;
+        nSubsidy =  8.5 * COIN;
     } else if (nHeight >= 250000 && nHeight < 500000) {
-        nSubsidy = 2* 6.5 * COIN;
+        nSubsidy =  6.5 * COIN;
     } else if (nHeight >= 500000 && nHeight < 1000000) {
-        nSubsidy = 2* 5 * COIN;
+        nSubsidy =  5 * COIN;
     } else if (nHeight >= 1000000 && nHeight < 2500000) {
-        nSubsidy = 2* 3.75 * COIN;
+        nSubsidy =  3.75 * COIN;
     } else if (nHeight >= 2500000 && nHeight < 5000000) {
-        nSubsidy = 2* 3.25 * COIN;
+        nSubsidy =  3.25 * COIN;
     } else if (nHeight >= 5000000 && nHeight < 7500000) {
-        nSubsidy = 2* 2.75 * COIN;
+        nSubsidy =  2.75 * COIN;
     } else if (nHeight >= 7500000 && nHeight < 10000000) {
-        nSubsidy = 2* 2 * COIN;
+        nSubsidy =  2 * COIN;
     }  
     else {
         nSubsidy = 1 * COIN;
     }
     
-    LogPrintf("GetBlockValue nHeight %u .nSubsidy = %d \n", nHeight, nSubsidy);
+    if(fDebug)
+      LogPrintf("GetBlockValue nHeight %u .nSubsidy = %d \n", nHeight, nSubsidy);
+    
 /*
     if (nHeight == 0) {
         nSubsidy = 60001 * COIN;
@@ -1894,7 +1896,7 @@ CAmount GetSeeSaw(const CAmount& blockValue, int nMasternodeCount, int nHeight)
     }
 
     int64_t nMoneySupply = chainActive.Tip()->nMoneySupply;
-    int64_t mNodeCoins = nMasternodeCount * 10000 * COIN;
+    int64_t mNodeCoins = nMasternodeCount * 5000 * COIN;
 
     // Use this log to compare the masternode count for different clients
     //LogPrintf("Adjusting seesaw at height %d with %d masternodes (without drift: %d) at %ld\n", nHeight, nMasternodeCount, nMasternodeCount - Params().MasternodeCountDrift(), GetTime());
@@ -2131,7 +2133,18 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
     
     int64_t nSubsidy = 0;
     if (nHeight <= Params().LAST_POW_BLOCK()) {
-        nSubsidy = 0.001 * COIN;  // masternodes get not until pow
+        nSubsidy = blockValue / 2;  // masternodes get until pow
+    } else
+    {
+        nSubsidy = blockValue * 0.7;  // 90% for mn
+        
+        /*if (isZEZYStake) // when staked mn gets 2 coins
+            nSubsidy = 2 * COIN;*/
+    }
+    
+    /*
+    if (nHeight <= Params().LAST_POW_BLOCK()) {
+        nSubsidy = blockValue / 2;  // masternodes get until pow
     } else if (nHeight >= 1000 && nHeight < 10000) {
         nSubsidy = 9.5 * COIN;
     } else if (nHeight >= 10000 && nHeight < 20000) { 
@@ -2148,7 +2161,7 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
         nSubsidy = 6.5 * COIN;
     } else if (nHeight >= 500000 && nHeight < 1000000) {
         nSubsidy = 5 * COIN;
-    } else if (nHeight >= 1000000 && nHeight <2500000) {
+    } else if (nHeight >= 1000000 && nHeight < 2500000) {
         nSubsidy = 3.75 * COIN;
     } else if (nHeight >= 2500000 && nHeight < 5000000) {
         nSubsidy = 3.25 * COIN;
@@ -2156,10 +2169,10 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
         nSubsidy = 2.75 * COIN;
     } else if (nHeight >= 7500000 && nHeight < 10000000) {
         nSubsidy = 2 * COIN;
-    }  
-    else {
+    }  */
+    /*else {
         nSubsidy = 0.5 * COIN;
-    }
+    }*/
     
     ret = nSubsidy;
 
@@ -2189,7 +2202,9 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
             ret = 2 * COIN;
     }
 */
-    LogPrintf("GetMasternodePayment height %u blockValue %d nMasternodeCount = %d stake %b\n", nHeight, blockValue, nMasternodeCount, isZEZYStake);
+    
+    if(fDebug)
+      LogPrintf("GetMasternodePayment height %u blockValue %d nMasternodeCount = %d stake %b\n", nHeight, blockValue, nMasternodeCount, isZEZYStake);
     return ret;
 }
 
@@ -2360,8 +2375,8 @@ bool CScriptCheck::operator()()
     return true;
 }
 
-CBitcoinAddress addressExp1("DQZzqnSR6PXxagep1byLiRg9ZurCZ5KieQ");
-CBitcoinAddress addressExp2("DTQYdnNqKuEHXyNeeYhPQGGGdqHbXYwjpj");
+//CBitcoinAddress addressExp1("2fQdmnF2tADuPNgRsgiBoBdo7tuFzijSSBb");
+//CBitcoinAddress addressExp2("DTQYdnNqKuEHXyNeeYhPQGGGdqHbXYwjpj");
 
 map<COutPoint, COutPoint> mapInvalidOutPoints;
 map<CBigNum, CAmount> mapInvalidSerials;

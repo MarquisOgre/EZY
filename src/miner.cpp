@@ -136,7 +136,8 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
 
     
     if (fProofOfStake) {
-        LogPrintf("CreateNewBlock fProofOfStake %b\n", fProofOfStake);  
+        if(fDebug)
+           LogPrintf("CreateNewBlock fProofOfStake %b\n", fProofOfStake);  
       
         boost::this_thread::interruption_point();
         pblock->nTime = GetAdjustedTime();
